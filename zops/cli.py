@@ -15,10 +15,11 @@ def zops(ctx,app_name,stage_name):
 @click.pass_context
 @click.option('--username',default=None)
 @click.option('--function_bucket',prompt='Function Bucket',help="Bucket for the function's code.")
-@click.option('--static_bucket',prompt='Static Bucket',help='Bucket for your static assets.')
-def create_user(ctx,username,function_bucket,static_bucket):
+@click.option('--static_bucket',prompt='Static Bucket',default=None,help='Bucket for your static assets.')
+@click.option('--aws_region_name',prompt='AWS Region Name',default='us-east-1',help='AWS Region Name')
+def create_user(ctx,username,function_bucket,static_bucket,aws_region_name):
     click.echo('Creating user: {0}'.format(username or ctx.obj['zops'].username))
-    return ctx.obj['zops'].create_user_stack(username,function_bucket,static_bucket)
+    return ctx.obj['zops'].create_user_stack(username,function_bucket,static_bucket,aws_region_name)
 
 @zops.command()
 @click.pass_context
@@ -39,10 +40,11 @@ def user_credentials(ctx,username):
 
 @zops.command()
 @click.option('--function_bucket',prompt='Function Bucket',help="Bucket for the function's code.")
+@click.option('--aws_region_name',prompt='AWS Region Name',help="AWS Region Name ")
 @click.pass_context
-def deploy_initial(ctx,function_bucket):
+def deploy_initial(ctx,function_bucket,aws_region_name):
     click.echo('Creating initial app...')
-    ctx.obj['zops'].create_initial_app(function_bucket)
+    ctx.obj['zops'].create_initial_app(function_bucket,aws_region_name)
     click.echo('Deploying initial app...')
     ctx.obj['zops'].deploy_initial_app()
     click.echo('Deleting local copy of initial app...')
