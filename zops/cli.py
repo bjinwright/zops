@@ -1,6 +1,8 @@
 import click
+import importlib
 import terminaltables
 from zops import Zops
+
 
 @click.group()
 @click.option('--profile_name',help='Credentials profile name. ',
@@ -20,12 +22,13 @@ def zops(ctx,profile_name):
               help='Bucket for your static assets.')
 @click.option('--aws_region_name',prompt='AWS Region Name',
               default='us-east-1',help='AWS Region Name')
+@click.option('--user_temp_class',help='CloudFormation User Class',default='zops.cf.UserTemplate')
 @click.pass_context
 def create_user(ctx,app_name,stage_name,username,function_bucket,static_bucket,
-                aws_region_name):
+                aws_region_name,user_temp_class):
     z = Zops(app_name,stage_name,function_bucket=function_bucket,
                 static_bucket=static_bucket,username=username,
-                aws_region_name=aws_region_name,
+                aws_region_name=aws_region_name,user_temp_class=user_temp_class,
              profile_name=ctx.obj['profile_name'])
     click.echo('Creating user: {0}'.format(username or zops.username))
     return z.create_user_stack()

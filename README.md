@@ -32,6 +32,7 @@ Commands:
 
 Create an IAM user tailored to your app, stage, region, function and static buckets.
 
+**Option:** --user_temp_class - Change the class used to build the CloudFormation template for creating a user
 ```
 >>>zops create_user blog dev
 Username: dev_user

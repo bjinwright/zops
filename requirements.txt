@@ -1,6 +1,4 @@
 awacs>=0.6.0
-boto3>=1.4.0
-botocore>=1.4.49
 click>=6.6
 Flask>=0.11.1
 Jinja2>=2.8
