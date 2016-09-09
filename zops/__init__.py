@@ -20,7 +20,7 @@ class Zops(object):
 
     def __init__(self, app_name, stage_name,
                  function_bucket=None, static_bucket=None,
-                 username=None, aws_region_name=None):
+                 username=None, aws_region_name='us-east-1',profile_name='default'):
         self.app_name = app_name
         self.stage_name = stage_name
         self.user_stack_name = 'zappa{0}{1}user'.format(
@@ -29,11 +29,13 @@ class Zops(object):
         self.static_bucket = static_bucket
         self.aws_region_name = aws_region_name
         self.username = username or self.user_stack_name
+        self.profile_name = profile_name
         self.t = Template()
         self.t.add_description(
             "Zappa Template for {app_name}-{stage_name} ".format(
                 app_name=self.app_name, stage_name=self.stage_name))
-        self.cf = boto3.resource('cloudformation')
+        session = boto3.session.Session(profile_name=self.profile_name)
+        self.cf = session.resource('cloudformation')
 
     def get_statement_list(self):
         stm_list = []

@@ -3,31 +3,40 @@ import terminaltables
 from zops import Zops
 
 @click.group()
-def zops():
-    return
+@click.option('--profile_name',help='Credentials profile name. ',
+              default='default')
+@click.pass_context
+def zops(ctx,profile_name):
+    ctx.obj['profile_name'] = profile_name
 
 @zops.command()
 @click.argument('app_name')
 @click.argument('stage_name')
-@click.option('--username',default=None,prompt='Username',help='Username for IAM user')
-@click.option('--function_bucket',prompt='Function Bucket',help="Bucket for the function's code.")
+@click.option('--username',default=None,prompt='Username',
+              help='Username for IAM user')
+@click.option('--function_bucket',prompt='Function Bucket',
+              help="Bucket for the function's code.")
 @click.option('--static_bucket',prompt='Static Bucket',default=None,
               help='Bucket for your static assets.')
 @click.option('--aws_region_name',prompt='AWS Region Name',
               default='us-east-1',help='AWS Region Name')
-def create_user(app_name,stage_name,username,function_bucket,static_bucket,
+@click.pass_context
+def create_user(ctx,app_name,stage_name,username,function_bucket,static_bucket,
                 aws_region_name):
     z = Zops(app_name,stage_name,function_bucket=function_bucket,
                 static_bucket=static_bucket,username=username,
-                aws_region_name=aws_region_name)
+                aws_region_name=aws_region_name,
+             profile_name=ctx.obj['profile_name'])
     click.echo('Creating user: {0}'.format(username or zops.username))
     return z.create_user_stack()
 
 @zops.command()
 @click.argument('app_name')
 @click.argument('stage_name')
-def user_credentials(app_name,stage_name):
-    result = Zops(app_name,stage_name).user_stack_outputs()
+@click.pass_context
+def user_credentials(ctx,app_name,stage_name):
+    result = Zops(app_name,stage_name,
+                  profile_name=ctx.obj['profile_name']).user_stack_outputs()
     try:
         table_data = [
             [i['OutputKey'], i['OutputValue']]
@@ -43,20 +52,26 @@ def user_credentials(app_name,stage_name):
 @zops.command()
 @click.argument('app_name')
 @click.argument('stage_name')
-def delete_user(app_name,stage_name):
+@click.pass_context
+def delete_user(ctx,app_name,stage_name):
 
-    z = Zops(app_name,stage_name)
+    z = Zops(app_name,stage_name,profile_name=ctx.obj['profile_name'])
     z.delete_user_stack()
-    click.echo('Deleted user stack: {0}'.format(z.user_stack_name), color="red")
+    click.echo('Deleted user stack: {0}'.format(z.user_stack_name),
+               color="red")
 
 
 @zops.command()
 @click.argument('app_name')
 @click.argument('stage_name')
-@click.option('--function_bucket',prompt='Function Bucket',help="Bucket for the function's code.")
-@click.option('--aws_region_name',prompt='AWS Region Name',default='us-east-1',help="AWS Region Name ")
-def deploy_initial(app_name,stage_name,function_bucket,aws_region_name):
-    z = Zops(app_name,stage_name,function_bucket=function_bucket,aws_region_name=aws_region_name)
+@click.option('--function_bucket',prompt='Function Bucket',
+              help="Bucket for the function's code.")
+@click.option('--aws_region_name',prompt='AWS Region Name',
+              default='us-east-1',help="AWS Region Name ")
+@click.pass_context
+def deploy_initial(ctx,app_name,stage_name,function_bucket,aws_region_name):
+    z = Zops(app_name,stage_name,function_bucket=function_bucket,
+             aws_region_name=aws_region_name,profile_name=ctx.obj['profile_name'])
     click.echo('Creating initial app...')
     z.create_initial_app()
     click.echo('Deploying initial app...')
@@ -67,10 +82,14 @@ def deploy_initial(app_name,stage_name,function_bucket,aws_region_name):
 @zops.command()
 @click.argument('app_name')
 @click.argument('stage_name')
-@click.option('--function_bucket',prompt='Function Bucket',help="Bucket for the function's code.")
-@click.option('--aws_region_name',prompt='AWS Region Name',default='us-east-1',help="AWS Region Name ")
-def undeploy_initial(app_name,stage_name,function_bucket,aws_region_name):
-    z = Zops(app_name,stage_name,function_bucket=function_bucket,aws_region_name=aws_region_name)
+@click.option('--function_bucket',prompt='Function Bucket',
+              help="Bucket for the function's code.")
+@click.option('--aws_region_name',prompt='AWS Region Name',
+              default='us-east-1',help="AWS Region Name ")
+@click.pass_context
+def undeploy_initial(ctx,app_name,stage_name,function_bucket,aws_region_name):
+    z = Zops(app_name,stage_name,function_bucket=function_bucket,
+             aws_region_name=aws_region_name,profile_name=ctx.obj['profile_name'])
     click.echo('Creating initial app...')
     z.create_initial_app()
     click.echo('Undeploying initial app...')
@@ -78,5 +97,4 @@ def undeploy_initial(app_name,stage_name,function_bucket,aws_region_name):
     click.echo('Deleting local copy of initial app...')
     z.delete_initial_app()
 
-
-zops_ins = zops()
+zops_ins = zops(obj={})

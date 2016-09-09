@@ -11,12 +11,14 @@ pip install zops
 
 ###Zops
 
+This commands lists the commands for you. There is only one option for this command and it is **--profile_name**. The profile_name option sets the credentials profile from your ~/.aws/credentials file. This option can be passed to all subcommands.
 ```
 >>>zops
 Usage: zops [OPTIONS] COMMAND [ARGS]...
 
 Options:
-  --help  Show this message and exit.
+  --profile_name TEXT  Credentials profile name.
+  --help               Show this message and exit.
 
 Commands:
   create_user
@@ -24,7 +26,6 @@ Commands:
   deploy_initial
   undeploy_initial
   user_credentials
-
 ```
 
 ###Create User
