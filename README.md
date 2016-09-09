@@ -1,6 +1,16 @@
 # zops
 Utils for devops teams that want to deploy using Zappa
 
+##Use cases?
+
+####Users
+I work on a team where two teams exists, engineers and systems (devops eam). We wanted to use Zappa but the systems team doesn't want to (and shouldn't) give admin rights to all engineers (even if it is the staging account). We wanted to give users keys that they could use to deploy their apps and also (more importantly) wanted separate IAM users for every Jenkins build. I've tried to give each user only the privileges needed for the **app** and **stage** requested.
+
+####CI, Deploy the Initial and Following Versions
+
+We also needed the ability to skip the **zappa deploy** command because we want to deploy using our CI/CD servers (Jenkin, CircleCI, TravisCI, and etc.). I'm also morally against putting if/then logic in Jenkins and other CI build scripts.
+So I chose to deploy a small Flask app with the same name the real project will use.
+
 ##Install
 
 ```
