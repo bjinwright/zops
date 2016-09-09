@@ -11,9 +11,20 @@ pip install zops
 
 ###Zops
 
-All of zops' commands require two variables, **app_name** and **stage_name**.
 ```
->>>zops app_name stage_name
+>>>zops
+Usage: zops [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  create_user
+  delete_user
+  deploy_initial
+  undeploy_initial
+  user_credentials
+
 ```
 
 ###Create User
@@ -21,7 +32,8 @@ All of zops' commands require two variables, **app_name** and **stage_name**.
 Create an IAM user tailored to your app, stage, region, function and static buckets.
 
 ```
->>>zops blog dev create_user
+>>>zops create_user blog dev
+Username: dev_user
 Function Bucket: your_functions_bucket
 Static Bucket: your_apps_static_bucket
 AWS Region Name [us-east-1]: us-east-1
@@ -33,8 +45,7 @@ Creating user: zappablogdevuser
 Get credentials for the user you created with the create_user command.
 
 ```
->>>zops blog dev user_credentials
-Username: zappablogdevuser
+>>>zops user_credentials blog dev
 +-----------+------------------------------------------+
 | Attribute | Value                                    |
 +-----------+------------------------------------------+
@@ -48,7 +59,7 @@ Username: zappablogdevuser
 
 Deploy a small Flask app using the newly created credentials. Use this command if you are planning on using a Continuous Integration/Deployment server.
 ```
->>>zops blog dev deploy_initial
+>>>zops deploy_initial blog dev
 Function Bucket: your_function_bucket
 AWS Region Name [us-east-1]: us-east-1
 Creating initial app...
@@ -57,4 +68,17 @@ Deploying initial app...
 100%|████████████████████████████████████████████████████████████| 1008/1008 [01:39<00:00,  5.25 endpoint/s]
 Deleting local copy of initial app...
 
+```
+
+###Undeploy Initial
+
+Undeploy the Zappa app with the given name and stage
+
+```
+>>>zops undeploy_initial blog dev
+Function Bucket: your_function_bucket
+AWS Region Name [us-east-1]:
+Creating initial app...
+Undeploying initial app...
+Deleting local copy of initial app...
 ```
