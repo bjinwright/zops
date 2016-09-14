@@ -69,7 +69,21 @@ Get credentials for the user you created with the create_user command.
 
 ###Deploy Initial
 
-Deploy a small Flask app using the newly created credentials. Use this command if you are planning on using a Continuous Integration/Deployment server.
+
+The **deploy_initial** command runs the **zappa deploy** command in order to deploy an initial WSGI app so your continuous integration server can run the **zappa update** command with no problems. The command deploys a small Flask app using the newly created credentials.
+
+#####Make Appropriate Directories
+
+In order to achieve this the **zappa deploy** requires that you create an empty folder with the exact name of the folder you will deploy from within your CI environment or from the command line. **Important:** This does not mean that you should move your code here, keep your code where you normally store it. This should remain an empty directory. The **zappa deploy** commannd uses the directory name (ex. projecta from below) to determine the Lambda and API Gateway name.
+ ```
+- workspace
+    |_ zops
+        |_ projecta #Create a new empty folder for each project
+        |_ projectb
+        |_ projectc
+
+ ```
+
 ```
 >>>zops deploy_initial blog dev
 Function Bucket: your_function_bucket
