@@ -14,7 +14,7 @@ class Zops(object):
     def __init__(self, app_name, stage_name,
                  function_bucket=None, static_bucket=None,
                  username=None, aws_region_name='us-east-1',
-                 profile_name='default',user_temp_class='zops.cf.UserTemplate'):
+                 profile_name='default',user_temp_class='zops.user.UserTemplate'):
 
         self.app_name = app_name
         self.stage_name = stage_name

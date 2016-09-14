@@ -22,7 +22,7 @@ def zops(ctx,profile_name):
               help='Bucket for your static assets.')
 @click.option('--aws_region_name',prompt='AWS Region Name',
               default='us-east-1',help='AWS Region Name')
-@click.option('--user_temp_class',help='CloudFormation User Class',default='zops.cf.UserTemplate')
+@click.option('--user_temp_class',help='CloudFormation User Class',default='zops.user.UserTemplate')
 @click.pass_context
 def create_user(ctx,app_name,stage_name,username,function_bucket,static_bucket,
                 aws_region_name,user_temp_class):
