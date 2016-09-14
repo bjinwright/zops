@@ -1,5 +1,6 @@
 import awacs
-
+import re
+import string
 from awacs.apigateway import ARN as APIGW_ARN
 from awacs.aws import Allow, Policy, Statement
 from awacs.awslambda import ARN as LAMBDA_ARN
@@ -9,6 +10,10 @@ from awacs.events import ARN as EVENTS_ARN
 
 from troposphere import GetAtt, Output, Ref, Template
 from troposphere.iam import PolicyType, User, AccessKey
+
+
+alpha_num_pattern = re.compile('[\W_]+')
+
 
 
 class UserTemplate(object):
@@ -34,9 +39,9 @@ class UserTemplate(object):
         )
         self.t.add_resource(
             PolicyType(
-                "{app_name}{stage_name}".format(
+                alpha_num_pattern.sub('',"{app_name}{stage_name}".format(
                     app_name=self.app_name,
-                    stage_name=self.stage_name),
+                    stage_name=self.stage_name)),
                 Users=[Ref(zappa_user)],
                 PolicyName="zappa-{app_name}-{stage_name}".format(
                     app_name=self.app_name,
@@ -166,7 +171,8 @@ class UserTemplate(object):
                     awacs.awslambda.GetPolicy,
                     awacs.awslambda.ListVersionsByFunction,
                     awacs.awslambda.UpdateFunctionCode,
-                    awacs.awslambda.RemovePermission
+                    awacs.awslambda.RemovePermission,
+                    awacs.awslambda.UpdateFunctionConfiguration
 
                 ],
                 Resource=[
