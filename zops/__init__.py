@@ -2,12 +2,14 @@ import os
 import shutil
 import subprocess
 import boto3
+import re
 
 from jinja2 import FileSystemLoader, Environment
 from unipath import Path
 
 from .util import import_util
 
+alpha_num_pattern = re.compile('[\W_]+')
 
 class Zops(object):
 
@@ -18,8 +20,10 @@ class Zops(object):
 
         self.app_name = app_name
         self.stage_name = stage_name
-        self.user_stack_name = 'zappa{0}{1}user'.format(
-            self.app_name, self.stage_name)
+        self.user_stack_name = alpha_num_pattern.sub('', "zappa{app_name}{stage_name}user".format(
+            app_name=self.app_name,
+            stage_name=self.stage_name))
+
         self.function_bucket = function_bucket
         self.static_bucket = static_bucket
         self.aws_region_name = aws_region_name
@@ -71,12 +75,12 @@ class Zops(object):
         creds = self.user_stack_outputs()
         os.environ['AWS_SECRET_ACCESS_KEY'] = creds[0]['OutputValue']
         os.environ['AWS_ACCESS_KEY_ID'] = creds[1]['OutputValue']
-        try:
+        # try:
             #Run zappa deploy command
-            subprocess.check_output(['zappa', 'deploy', self.stage_name, '-s', 'app/zappa_settings.json'])
-        except Exception as e:
-            #If there is an error with the zappa deploy command print the output
-            print(e.output)
+        subprocess.check_output(['zappa', 'deploy', self.stage_name, '-s', 'app/zappa_settings.json'])
+        # except Exception as e:
+        #     #If there is an error with the zappa deploy command print the output
+        #     print(e.output)
 
     def undeploy_initial_app(self):
         # Get the user stack's keys

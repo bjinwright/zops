@@ -1,13 +1,15 @@
 import awacs
 import re
 import string
+import awacs.cloudformation
+
 from awacs.apigateway import ARN as APIGW_ARN
 from awacs.aws import Allow, Policy, Statement
 from awacs.awslambda import ARN as LAMBDA_ARN
 from awacs.iam import ARN as IAM_ARN
 from awacs.s3 import ARN as S3_ARN
 from awacs.events import ARN as EVENTS_ARN
-
+from awacs.cloudformation import ARN as CLOUDFORMATION_ARN
 from troposphere import GetAtt, Output, Ref, Template
 from troposphere.iam import PolicyType, User, AccessKey
 
@@ -71,6 +73,7 @@ class UserTemplate(object):
         stm_list.extend(self.create_apigw_policy())
         stm_list.extend(self.create_lambda_policy())
         stm_list.extend(self.create_events_policy())
+        stm_list.extend(self.create_cloudformation_policy())
         return stm_list
 
     def create_s3_policy(self):
@@ -193,6 +196,22 @@ class UserTemplate(object):
             ),
         ]
 
+    def create_cloudformation_policy(self):
+        return [
+            Statement(
+                Effect=Allow,
+                Action=[
+                    awacs.cloudformation.Action('*')
+                ],
+                Resource=[
+                    CLOUDFORMATION_ARN(
+                        resource='*',
+                        region=self.aws_region_name,
+                        account='*'
+                    )
+                ]
+            )
+        ]
     def create_events_policy(self):
         return [
             Statement(
