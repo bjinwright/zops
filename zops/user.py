@@ -7,7 +7,7 @@ from awacs.apigateway import ARN as APIGW_ARN
 from awacs.aws import Allow, Policy, Statement
 from awacs.awslambda import ARN as LAMBDA_ARN
 from awacs.iam import ARN as IAM_ARN
-from awacs.s3 import ARN as S3_ARN
+from awacs.s3 import ARN as S3_ARN, Action
 from awacs.events import ARN as EVENTS_ARN
 from awacs.cloudformation import ARN as CLOUDFORMATION_ARN
 from troposphere import GetAtt, Output, Ref, Template
@@ -15,7 +15,6 @@ from troposphere.iam import PolicyType, User, AccessKey
 
 
 alpha_num_pattern = re.compile('[\W_]+')
-
 
 
 class UserTemplate(object):
@@ -91,7 +90,14 @@ class UserTemplate(object):
                 self.app_name, self.stage_name)),
                 S3_ARN("{0}/{1}-{2}-media/*".format(
                     self.static_bucket,
-                    self.app_name, self.stage_name)), ])
+                    self.app_name, self.stage_name)),
+                S3_ARN("{0}/{1}-{2}-static".format(
+                    self.static_bucket,
+                    self.app_name, self.stage_name)),
+                S3_ARN("{0}/{1}-{2}-media".format(
+                    self.static_bucket,
+                    self.app_name, self.stage_name)),
+                ])
 
         return [
             Statement(
@@ -103,14 +109,7 @@ class UserTemplate(object):
             ),
             Statement(
                 Effect=Allow,
-                Action=[awacs.s3.DeleteObject,
-                        awacs.s3.GetObject,
-                        awacs.s3.PutObject,
-                        awacs.s3.AbortMultipartUpload,
-                        awacs.s3.ListMultipartUploadParts,
-                        awacs.s3.ListBucketMultipartUploads,
-
-                        ],
+                Action=[Action('s3','*')],
                 Resource=bucket_list_paths,
             )
         ]
@@ -176,7 +175,6 @@ class UserTemplate(object):
                     awacs.awslambda.UpdateFunctionCode,
                     awacs.awslambda.RemovePermission,
                     awacs.awslambda.UpdateFunctionConfiguration
-
                 ],
                 Resource=[
                     LAMBDA_ARN('{0}-{1}'.format(
@@ -212,6 +210,7 @@ class UserTemplate(object):
                 ]
             )
         ]
+
     def create_events_policy(self):
         return [
             Statement(
