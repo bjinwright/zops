@@ -1,25 +1,25 @@
 # zops
 Utils for devops teams that want to deploy using Zappa
 
-##Use cases?
+## Use cases?
 
-####Users
+#### Users
 I work on a team where two teams exists, engineers and systems (devops eam). We wanted to use Zappa but the systems team doesn't want to (and shouldn't) give admin rights to all engineers (even if it is the staging account). We wanted to give users keys that they could use to deploy their apps and also (more importantly) wanted separate IAM users for every Jenkins build. I've tried to give each user only the privileges needed for the **app** and **stage** requested.
 
-####CI, Deploy the Initial and Following Versions
+#### CI, Deploy the Initial and Following Versions
 
 We also needed the ability to skip the **zappa deploy** command because we want to deploy using our CI/CD servers (Jenkin, CircleCI, TravisCI, and etc.). I'm also morally against putting if/then logic in Jenkins and other CI build scripts.
 So I chose to deploy a small Flask app with the same name the real project will use.
 
-##Install
+## Install
 
 ```
 pip install zops
 ```
 
-##Usage
+## Usage
 
-###Zops
+### Zops
 
 This commands lists the commands for you. There is only one option for this command and it is **--profile_name**. The profile_name option sets the credentials profile from your ~/.aws/credentials file. This option can be passed to all subcommands.
 ```
@@ -38,7 +38,7 @@ Commands:
   user_credentials
 ```
 
-###Create User
+### Create User
 
 Create an IAM user tailored to your app, stage, region, function and static buckets.
 
@@ -52,7 +52,7 @@ AWS Region Name [us-east-1]: us-east-1
 Creating user: zappablogdevuser
 ```
 
-###User Credentials
+### User Credentials
 
 Get credentials for the user you created with the create_user command.
 
@@ -67,12 +67,12 @@ Get credentials for the user you created with the create_user command.
 
 ```
 
-###Deploy Initial
+### Deploy Initial
 
 
 The **deploy_initial** command runs the **zappa deploy** command in order to deploy an initial WSGI app so your continuous integration server can run the **zappa update** command with no problems. The command deploys a small Flask app using the newly created credentials.
 
-#####Make Appropriate Directories
+##### Make Appropriate Directories
 
 In order to achieve this the **zappa deploy** requires that you create an empty folder with the exact name of the folder you will deploy from within your CI environment or from the command line. **Important:** This does not mean that you should move your code here, keep your code where you normally store it. This should remain an empty directory. The **zappa deploy** commannd uses the directory name (ex. projecta from below) to determine the Lambda and API Gateway name.
  ```
@@ -96,7 +96,7 @@ Deleting local copy of initial app...
 
 ```
 
-###Undeploy Initial
+### Undeploy Initial
 
 Undeploy the Zappa app with the given name and stage
 
